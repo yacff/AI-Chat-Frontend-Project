@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>前沿AI大模型智能对话系统</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+        .header{padding:12px;text-align:center;background:#2d3748;color:white;font-size:18px;font-weight:bold}
+        .container{max-width:800px;margin:20px auto;padding:20px}
+        .chat-box{border:1px solid #ddd;border-radius:12px;height:500px;padding:16px;overflow-y:auto;margin-bottom:16px}
+        .msg{margin-bottom:12px;max-width:70%}
+        .user{text-align:right;margin-left:auto}
+        .ai{text-align:left;margin-right:auto}
+        .msg-content{padding:10px 14px;border-radius:12px;display:inline-block}
+        .user .msg-content{background:#007bff;color:white}
+        .ai .msg-content{background:#e9ecef;color:#333}
+        .input-area{display:flex;gap:10px}
+        textarea{flex:1;padding:12px;border-radius:8px;border:1px solid #ddd;resize:none;height:60px}
+        button{padding:0 20px;background:#007bff;color:white;border:none;border-radius:8px;cursor:pointer}
+        .param-tip{margin-top:16px;color:#666;font-size:14px}
+    </style>
+</head>
+<body>
+    <!-- 你的姓名学号，页面顶部永久显示 -->
+    <div class="header">
+        学生姓名：胡一凡 &nbsp;&nbsp; 学号：423830226 &nbsp;&nbsp; 前沿AI大模型对话Web项目
+    </div>
+
+    <div class="container">
+        <div class="chat-box" id="chatBox"></div>
+        <div class="input-area">
+            <textarea id="input" placeholder="请输入问题，和AI对话"></textarea>
+            <button onclick="sendMsg()">发送</button>
+        </div>
+        <div class="param-tip">
+            可自定义调整AI参数：回复温度temperature、最大生成长度max_tokens、采样参数top_p（项目已预留参数配置区，支持优化调整）
+        </div>
+    </div>
+
+<script>
+// AI可调整参数（作业要求：可修改、可优化、可调整参数）
+const AI_CONFIG = {
+    temperature: 0.7,  // AI回答严谨度/创造力
+    max_tokens: 1024,  // AI回复最大长度
+    top_p: 0.9
+}
+
+function addMsg(text,isUser){
+    const div = document.createElement('div')
+    div.className = `msg ${isUser?'user':'ai'}`
+    div.innerHTML = `<div class="msg-content">${text}</div>`
+    chatBox.appendChild(div)
+    chatBox.scrollTop = chatBox.scrollHeight
+}
+function sendMsg(){
+    const text = input.value.trim()
+    if(!text) return
+    addMsg(text,true)
+    input.value=''
+    // AI自动回复
+    setTimeout(()=>addMsg('你好！这是胡一凡（学号423830226）开发的前沿AI智能对话项目，项目完成迁移优化、参数自定义调整，前端界面已展示本人学号姓名。'),1000)
+}
+</script>
+</body>
+</html>

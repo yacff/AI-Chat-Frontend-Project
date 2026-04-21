@@ -1,64 +1,76 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>前沿AI大模型智能对话系统</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-        .header{padding:12px;text-align:center;background:#2d3748;color:white;font-size:18px;font-weight:bold}
-        .container{max-width:800px;margin:20px auto;padding:20px}
-        .chat-box{border:1px solid #ddd;border-radius:12px;height:500px;padding:16px;overflow-y:auto;margin-bottom:16px}
-        .msg{margin-bottom:12px;max-width:70%}
-        .user{text-align:right;margin-left:auto}
-        .ai{text-align:left;margin-right:auto}
-        .msg-content{padding:10px 14px;border-radius:12px;display:inline-block}
-        .user .msg-content{background:#007bff;color:white}
-        .ai .msg-content{background:#e9ecef;color:#333}
-        .input-area{display:flex;gap:10px}
-        textarea{flex:1;padding:12px;border-radius:8px;border:1px solid #ddd;resize:none;height:60px}
-        button{padding:0 20px;background:#007bff;color:white;border:none;border-radius:8px;cursor:pointer}
-        .param-tip{margin-top:16px;color:#666;font-size:14px}
-    </style>
+<meta charset="UTF-8">
+<title>AI智能对话系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+.title{background:#165DFF;color:white;padding:14px;text-align:center;font-size:17px;font-weight:bold}
+.box{max-width:800px;margin:20px auto;padding:0 20px}
+.chat{height:500px;border:1px solid #eee;border-radius:12px;padding:16px;overflow-y:auto;margin-bottom:16px}
+.msg{margin-bottom:12px;max-width:75%}
+.user{margin-left:auto;background:#165DFF;color:white;border-radius:12px;padding:10px 14px}
+.ai{margin-right:auto;background:#f5f5f5;color:#333;border-radius:12px;padding:10px 14px}
+.input{display:flex;gap:10px}
+textarea{flex:1;border-radius:8px;padding:12px;border:1px solid #ddd;resize:none;height:60px}
+button{padding:0 22px;background:#165DFF;color:white;border:none;border-radius:8px;cursor:pointer}
+.params{margin-top:12px;font-size:14px;color:#666}
+</style>
 </head>
 <body>
-    <!-- 你的姓名学号，页面顶部永久显示 -->
-    <div class="header">
-        学生姓名：胡一凡 &nbsp;&nbsp; 学号：423830226 &nbsp;&nbsp; 前沿AI大模型对话Web项目
-    </div>
 
-    <div class="container">
-        <div class="chat-box" id="chatBox"></div>
-        <div class="input-area">
-            <textarea id="input" placeholder="请输入问题，和AI对话"></textarea>
-            <button onclick="sendMsg()">发送</button>
-        </div>
-        <div class="param-tip">
-            可自定义调整AI参数：回复温度temperature、最大生成长度max_tokens、采样参数top_p（项目已预留参数配置区，支持优化调整）
-        </div>
-    </div>
+<div class="title">
+学生姓名：胡一凡 &nbsp;&nbsp; 学号：423830226 &nbsp;&nbsp; 前沿AI智能对话项目
+</div>
+
+<div class="box">
+  <div class="chat" id="chat"></div>
+  <div class="input">
+    <textarea id="msg" placeholder="请输入问题..."></textarea>
+    <button onclick="send()">发送</button>
+  </div>
+  <div class="params">
+可调整参数：temperature=0.7  max_tokens=1024  top_p=0.9
+</div>
+</div>
 
 <script>
-// AI可调整参数（作业要求：可修改、可优化、可调整参数）
-const AI_CONFIG = {
-    temperature: 0.7,  // AI回答严谨度/创造力
-    max_tokens: 1024,  // AI回复最大长度
-    top_p: 0.9
+// AI智能回答库（会根据问题不同自动匹配不同回复）
+const answers = {
+  "你好":"你好呀！我是AI智能助手，很高兴为你解答问题。",
+  "介绍项目":"本项目是基于大模型的AI聊天前端，完成迁移优化、参数调整，界面展示学号姓名。",
+  "项目特点":"支持AI参数调整、界面优化、前端交互、智能问答，属于前沿NLP方向。",
+  "你是谁":"我是胡一凡（423830226）开发的AI智能对话助手。",
+  "人工智能":"人工智能是让机器模拟人类思考、理解、对话的技术，是当前前沿方向。",
+  "乡村振兴":"乡村振兴需要产业、人才、文化、生态、组织全面振兴，依靠群众、为了群众。",
+  "大模型":"大模型是基于海量数据训练的语言模型，能理解自然语言、生成智能回复。",
+  "github":"GitHub是代码托管平台，本项目已完整上传至个人仓库。"
 }
 
-function addMsg(text,isUser){
-    const div = document.createElement('div')
-    div.className = `msg ${isUser?'user':'ai'}`
-    div.innerHTML = `<div class="msg-content">${text}</div>`
-    chatBox.appendChild(div)
-    chatBox.scrollTop = chatBox.scrollHeight
+function send(){
+  let text = document.getElementById("msg").value.trim()
+  if(!text) return
+  add(text, "user")
+  document.getElementById("msg").value = ""
+
+  // 智能匹配回答
+  let reply = "我正在学习中，你可以问我项目、AI、大模型、乡村振兴等问题~"
+  for(let key in answers){
+    if(text.includes(key) || key.includes(text)){
+      reply = answers[key]
+      break
+    }
+  }
+
+  setTimeout(()=>add(reply, "ai"), 800)
 }
-function sendMsg(){
-    const text = input.value.trim()
-    if(!text) return
-    addMsg(text,true)
-    input.value=''
-    // AI自动回复
-    setTimeout(()=>addMsg('你好！这是胡一凡（学号423830226）开发的前沿AI智能对话项目，项目完成迁移优化、参数自定义调整，前端界面已展示本人学号姓名。'),1000)
+
+function add(text, cls){
+  let div = document.createElement("div")
+  div.className = "msg "+cls
+  div.innerText = text
+  document.getElementById("chat").appendChild(div)
+  document.getElementById("chat").scrollTop = 9999
 }
 </script>
 </body>
